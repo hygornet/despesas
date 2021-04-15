@@ -141,7 +141,7 @@ class _ListarDespesasState extends State<ListarDespesas> {
                       existData()
                           ? Text('Salário: ' + dados.first.salario.toString())
                           : Text(''),
-                      Text('Valor total de Gastos: ' +
+                      Text('Valor dos Gastos: ' +
                           provider.calcularGastos().toString()),
                       Text('Sobrou: ' + provider.diferenca().toString()),
                     ],

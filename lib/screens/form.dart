@@ -60,6 +60,7 @@ class _FormScreenState extends State<FormScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final node = FocusScope.of(context);
     final gastosProvider = Provider.of<ProviderGastos>(context);
 
     void addGastos() {
@@ -112,6 +113,7 @@ class _FormScreenState extends State<FormScreen> {
                     TextFormField(
                       onSaved: (newValue) => _formData['salario'] = newValue,
                       enabled: fieldSalario,
+                      textInputAction: TextInputAction.next,
                       controller: salarioController,
                       decoration: InputDecoration(
                         icon: Icon(Icons.monetization_on),
@@ -122,6 +124,7 @@ class _FormScreenState extends State<FormScreen> {
                     TextFormField(
                       onSaved: (newValue) => _formData['descricao'] = newValue,
                       controller: descricaoController,
+                      textInputAction: TextInputAction.next,
                       decoration: InputDecoration(
                         icon: Icon(Icons.description_outlined),
                         labelText: 'Digite a descrição',
@@ -132,6 +135,8 @@ class _FormScreenState extends State<FormScreen> {
                       onSaved: (newValue) => _formData['valor'] = newValue,
                       controller: valorController,
                       keyboardType: TextInputType.number,
+                      onFieldSubmitted: (_) =>
+                          node.unfocus(), // Submit and hide keyboard
                       decoration: InputDecoration(
                         icon: Icon(Icons.attach_money),
                         labelText: 'Valor',
@@ -212,7 +217,7 @@ class _FormScreenState extends State<FormScreen> {
                           color: Colors.white,
                         ),
                         label: Text(
-                          'Tabela',
+                          'Visualizar gastos',
                           style: TextStyle(color: Colors.white),
                         ),
                       ),

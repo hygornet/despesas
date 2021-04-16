@@ -43,7 +43,7 @@ class _ListarDespesasState extends State<ListarDespesas> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Gastos do Hygor'),
+        title: Text('Lista de Despesas'),
         centerTitle: true,
       ),
       body: Column(
@@ -151,10 +151,11 @@ class _ListarDespesasState extends State<ListarDespesas> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
+                    SizedBox(height: 10),
                     Text(
-                      'Valor Total: 0',
+                      'Ops! Você não tem despesa cadastrada...',
                       style: TextStyle(
-                        fontSize: 25,
+                        fontSize: 15,
                       ),
                     ),
                   ],

@@ -4,6 +4,7 @@ import 'package:despesastable/provider/providerGastos.dart';
 import 'package:despesastable/screens/listarDespesas.dart';
 import 'package:despesastable/utils/approutes.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 class FormScreen extends StatefulWidget {
@@ -114,6 +115,7 @@ class _FormScreenState extends State<FormScreen> {
                       onSaved: (newValue) => _formData['salario'] = newValue,
                       enabled: fieldSalario,
                       textInputAction: TextInputAction.next,
+                      keyboardType: TextInputType.number,
                       controller: salarioController,
                       decoration: InputDecoration(
                         icon: Icon(Icons.monetization_on),

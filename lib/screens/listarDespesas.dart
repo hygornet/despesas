@@ -41,6 +41,14 @@ class _ListarDespesasState extends State<ListarDespesas> {
       }
     }
 
+    bool verificaSobrouNegativo() {
+      if (provider.diferenca() < 0) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Lista de Despesas'),
@@ -166,10 +174,53 @@ class _ListarDespesasState extends State<ListarDespesas> {
                             Colors.red,
                             'Total de Gastos'),
                         SizedBox(height: 10),
-                        resultadoCalculoDespesa(
-                            provider.diferenca().toStringAsFixed(2),
-                            Colors.green,
-                            'Sobrou'),
+                        Container(
+                          alignment: Alignment.center,
+                          width: 200,
+                          height: 50,
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              width: 2,
+                              color: verificaSobrouNegativo()
+                                  ? Colors.red
+                                  : Colors.green,
+                            ),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              verificaSobrouNegativo()
+                                  ? Column(
+                                      children: [
+                                        Text('Você está devendo:'),
+                                        Text(
+                                          'R\$ ${provider.diferenca().toStringAsFixed(2)}',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                  : Column(
+                                      children: [
+                                        Text('Sobrou'),
+                                        Text(
+                                          'R\$ ${provider.diferenca().toStringAsFixed(2)}',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                            ],
+                          ),
+                        )
+                        // resultadoCalculoDespesa(
+                        //     provider.diferenca().toStringAsFixed(2),
+                        //     Colors.green,
+                        //     'Sobrou'),
                       ],
                     ),
                   )

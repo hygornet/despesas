@@ -45,6 +45,15 @@ class _ListarDespesasState extends State<ListarDespesas> {
       appBar: AppBar(
         title: Text('Lista de Despesas'),
         centerTitle: true,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Image.asset(
+              'assets/images/cartao.png',
+              fit: BoxFit.cover,
+            ),
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -56,7 +65,7 @@ class _ListarDespesasState extends State<ListarDespesas> {
                     physics: ScrollPhysics(),
                     scrollDirection: Axis.horizontal,
                     child: DataTable(
-                      columnSpacing: MediaQuery.of(context).size.width / 8,
+                      columnSpacing: MediaQuery.of(context).size.width / 9,
                       showBottomBorder: true,
                       columns: [
                         DataColumn(
@@ -95,7 +104,7 @@ class _ListarDespesasState extends State<ListarDespesas> {
                                 ),
                                 DataCell(
                                   Text(
-                                    e.valor.toString(),
+                                    'R\$ ${e.valor.toStringAsFixed(2)}',
                                   ),
                                   showEditIcon: true,
                                   onTap: () {
@@ -129,7 +138,7 @@ class _ListarDespesasState extends State<ListarDespesas> {
                       ),
                       Center(
                           child: Image.asset(
-                        "assets/images/20-201026_money-png-money-vector-png.png",
+                        "assets/images/money-png.png",
                         fit: BoxFit.cover,
                         height: 150,
                       )),
@@ -148,7 +157,7 @@ class _ListarDespesasState extends State<ListarDespesas> {
                         existData()
                             ? resultadoCalculoDespesa(
                                 dados.first.salario.toStringAsFixed(2),
-                                Colors.grey,
+                                Colors.blue,
                                 'Salario')
                             : Text(''),
                         SizedBox(height: 10),
@@ -173,6 +182,7 @@ class _ListarDespesasState extends State<ListarDespesas> {
                         'Ops! Você não tem despesa cadastrada...',
                         style: TextStyle(
                           fontSize: 15,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ],

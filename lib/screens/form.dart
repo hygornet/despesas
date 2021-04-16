@@ -21,13 +21,14 @@ class _FormScreenState extends State<FormScreen> {
   bool fieldSalario = true;
   var _key = GlobalKey<FormState>();
   var _formData = Map<String, dynamic>();
-  List<String> _options = ['Não', 'Sim'];
+  List<String> _options = ['Sim', 'Não'];
   List<String> _methodPayment = [
-    'Dinheiro',
-    'Cartão de Débito',
+    'Boleto',
     'Cartão de Crédito',
+    'Cartão de Débito',
+    'Dinheiro',
+    'PIX',
     'Transferência',
-    'Boleto'
   ];
 
   @override
@@ -101,6 +102,15 @@ class _FormScreenState extends State<FormScreen> {
       appBar: AppBar(
         title: Text('Cadastro de Despesa'),
         centerTitle: true,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Image.asset(
+              'assets/images/cartao.png',
+              fit: BoxFit.cover,
+            ),
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -119,7 +129,7 @@ class _FormScreenState extends State<FormScreen> {
                       controller: salarioController,
                       decoration: InputDecoration(
                         icon: Icon(Icons.monetization_on),
-                        labelText: 'Digite seu saldo atual',
+                        labelText: 'Digite seu Saldo Atual',
                         enabledBorder: InputBorder.none,
                       ),
                     ),
@@ -129,7 +139,7 @@ class _FormScreenState extends State<FormScreen> {
                       textInputAction: TextInputAction.next,
                       decoration: InputDecoration(
                         icon: Icon(Icons.description_outlined),
-                        labelText: 'Digite a descrição',
+                        labelText: 'Digite a Descrição',
                         enabledBorder: InputBorder.none,
                       ),
                     ),
@@ -141,7 +151,7 @@ class _FormScreenState extends State<FormScreen> {
                           node.unfocus(), // Submit and hide keyboard
                       decoration: InputDecoration(
                         icon: Icon(Icons.attach_money),
-                        labelText: 'Valor',
+                        labelText: 'Valor da Despesa',
                         enabledBorder: InputBorder.none,
                       ),
                     ),
@@ -191,7 +201,7 @@ class _FormScreenState extends State<FormScreen> {
                       child: TextButton.icon(
                         style: ButtonStyle(
                           backgroundColor:
-                              MaterialStateProperty.all<Color>(Colors.blue),
+                              MaterialStateProperty.all<Color>(Colors.grey),
                         ),
                         onPressed: () {
                           addGastos();
@@ -209,7 +219,7 @@ class _FormScreenState extends State<FormScreen> {
                       child: TextButton.icon(
                         style: ButtonStyle(
                           backgroundColor:
-                              MaterialStateProperty.all<Color>(Colors.blue),
+                              MaterialStateProperty.all<Color>(Colors.grey),
                         ),
                         onPressed: () {
                           Navigator.of(context).pushNamed(AppRoutes.FORM);

@@ -11,14 +11,15 @@ class ProviderGastos with ChangeNotifier {
   String pagou;
   double salario;
 
-  ProviderGastos(
-      {this.id,
-      this.descricao,
-      this.valor,
-      this.valorTotal,
-      this.formaPagamento,
-      this.pagou,
-      this.salario});
+  ProviderGastos({
+    this.id,
+    this.descricao,
+    this.valor,
+    this.valorTotal,
+    this.formaPagamento,
+    this.pagou,
+    this.salario,
+  });
 
   List<ProviderGastos> _item = [];
   List<ProviderGastos> get itemList => [..._item];

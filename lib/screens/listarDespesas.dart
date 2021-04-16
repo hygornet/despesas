@@ -46,120 +46,166 @@ class _ListarDespesasState extends State<ListarDespesas> {
         title: Text('Lista de Despesas'),
         centerTitle: true,
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          existData()
-              ? DataTable(
-                  columnSpacing: 40,
-                  showBottomBorder: true,
-                  columns: [
-                    DataColumn(
-                      label: Text('Descrição'),
-                      tooltip:
-                          'Se você clicar sobre a descrição irá excluir o registro.',
-                    ),
-                    DataColumn(
-                      label: Text('Valor'),
-                      tooltip:
-                          'Se você clicar sobre o valor você poderá atualizar o registro.',
-                    ),
-                    DataColumn(
-                      label: Flexible(child: Text('Pagamento')),
-                    ),
-                    DataColumn(label: Text('Pagou?')),
-                  ],
-                  rows: dados
-                      .map(
-                        (e) => DataRow(
-                          key: _headingRowKey,
-                          cells: [
-                            DataCell(
-                              Text(
-                                e.descricao.toString(),
-                              ),
-                              showEditIcon: true,
-                              onTap: () {
-                                Provider.of<ProviderGastos>(context,
-                                        listen: false)
-                                    .removeItem(e.id);
-                                Provider.of<ProviderGastos>(context,
-                                        listen: false)
-                                    .diferenca();
-                              },
-                            ),
-                            DataCell(
-                              Text(
-                                e.valor.toString(),
-                              ),
-                              showEditIcon: true,
-                              onTap: () {
-                                Navigator.of(context)
-                                    .pushNamed(AppRoutes.HOME, arguments: e);
-                              },
-                            ),
-                            DataCell(
-                              FittedBox(
-                                child: Text(
-                                  e.formaPagamento,
-                                ),
-                              ),
-                            ),
-                            DataCell(
-                              Text(e.pagou),
-                            ),
-                          ],
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            existData()
+                ? SingleChildScrollView(
+                    controller: ScrollController(),
+                    physics: ScrollPhysics(),
+                    scrollDirection: Axis.horizontal,
+                    child: DataTable(
+                      columnSpacing: MediaQuery.of(context).size.width / 8,
+                      showBottomBorder: true,
+                      columns: [
+                        DataColumn(
+                          label: Text('Descrição'),
+                          tooltip:
+                              'Se você clicar sobre a descrição irá excluir o registro.',
                         ),
-                      )
-                      .toList(),
-                )
-              : Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      height: 20,
+                        DataColumn(
+                          label: Text('Valor'),
+                          tooltip:
+                              'Se você clicar sobre o valor você poderá atualizar o registro.',
+                        ),
+                        DataColumn(
+                          label: Flexible(child: Text('Pagamento')),
+                        ),
+                        DataColumn(label: Text('Pagou?')),
+                      ],
+                      rows: dados
+                          .map(
+                            (e) => DataRow(
+                              key: _headingRowKey,
+                              cells: [
+                                DataCell(
+                                  Text(
+                                    e.descricao.toString(),
+                                  ),
+                                  showEditIcon: true,
+                                  onTap: () {
+                                    Provider.of<ProviderGastos>(context,
+                                            listen: false)
+                                        .removeItem(e.id);
+                                    Provider.of<ProviderGastos>(context,
+                                            listen: false)
+                                        .diferenca();
+                                  },
+                                ),
+                                DataCell(
+                                  Text(
+                                    e.valor.toString(),
+                                  ),
+                                  showEditIcon: true,
+                                  onTap: () {
+                                    Navigator.of(context).pushNamed(
+                                        AppRoutes.HOME,
+                                        arguments: e);
+                                  },
+                                ),
+                                DataCell(
+                                  FittedBox(
+                                    child: Text(
+                                      e.formaPagamento,
+                                    ),
+                                  ),
+                                ),
+                                DataCell(
+                                  Text(e.pagou),
+                                ),
+                              ],
+                            ),
+                          )
+                          .toList(),
                     ),
-                    Center(
-                        child: Image.asset(
-                      "assets/images/20-201026_money-png-money-vector-png.png",
-                      fit: BoxFit.cover,
-                      height: 150,
-                    )),
-                  ],
-                ),
-          SizedBox(
-            height: 10,
-          ),
-          verificarLista()
-              ? Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
+                  )
+                : Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      existData()
-                          ? Text('Salário: ' + dados.first.salario.toString())
-                          : Text(''),
-                      Text('Valor dos Gastos: ' +
-                          provider.calcularGastos().toString()),
-                      Text('Sobrou: ' + provider.diferenca().toString()),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Center(
+                          child: Image.asset(
+                        "assets/images/20-201026_money-png-money-vector-png.png",
+                        fit: BoxFit.cover,
+                        height: 150,
+                      )),
                     ],
                   ),
-                )
-              : Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    SizedBox(height: 10),
-                    Text(
-                      'Ops! Você não tem despesa cadastrada...',
-                      style: TextStyle(
-                        fontSize: 15,
-                      ),
+            SizedBox(
+              height: 10,
+            ),
+            verificarLista()
+                ? Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        existData()
+                            ? resultadoCalculoDespesa(
+                                dados.first.salario.toStringAsFixed(2),
+                                Colors.grey,
+                                'Salario')
+                            : Text(''),
+                        SizedBox(height: 10),
+                        resultadoCalculoDespesa(
+                            provider.calcularGastos().toStringAsFixed(2),
+                            Colors.red,
+                            'Total de Gastos'),
+                        SizedBox(height: 10),
+                        resultadoCalculoDespesa(
+                            provider.diferenca().toStringAsFixed(2),
+                            Colors.green,
+                            'Sobrou'),
+                      ],
                     ),
-                  ],
-                ),
+                  )
+                : Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SizedBox(height: 10),
+                      Text(
+                        'Ops! Você não tem despesa cadastrada...',
+                        style: TextStyle(
+                          fontSize: 15,
+                        ),
+                      ),
+                    ],
+                  ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Container resultadoCalculoDespesa(String provider, Color color, String text) {
+    return Container(
+      alignment: Alignment.center,
+      width: 200,
+      height: 50,
+      decoration: BoxDecoration(
+        border: Border.all(
+          width: 2,
+          color: color,
+        ),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(text),
+          Text(
+            'R\$ $provider',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ],
       ),
     );

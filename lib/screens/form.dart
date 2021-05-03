@@ -1,8 +1,5 @@
-import 'dart:math';
-
 import 'package:despesastable/database/db_data.dart';
 import 'package:despesastable/provider/providerGastos.dart';
-import 'package:despesastable/screens/listarDespesas.dart';
 import 'package:despesastable/utils/approutes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -33,14 +30,13 @@ class _FormScreenState extends State<FormScreen> {
   ];
 
   getSalario() async {
-    final carregar = await DbData.returnRecord()
+    final _carregarSalario = await DbData.returnRecord()
         .then((value) => salarioController.text = value.toString());
-    return carregar;
+    return _carregarSalario;
   }
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getSalario().toString();
   }
@@ -49,17 +45,17 @@ class _FormScreenState extends State<FormScreen> {
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    final received =
+    final recebeDadosListarDespesas =
         ModalRoute.of(context).settings.arguments as ProviderGastos;
 
-    if (received != null) {
+    if (recebeDadosListarDespesas != null) {
       if (_formData.isEmpty) {
-        _formData['id'] = received.id;
-        _formData['descricao'] = received.descricao;
-        _formData['valor'] = received.valor;
-        _formData['formaPagamento'] = received.formaPagamento;
-        _formData['pagou'] = received.pagou;
-        _formData['salario'] = received.salario;
+        _formData['id'] = recebeDadosListarDespesas.id;
+        _formData['descricao'] = recebeDadosListarDespesas.descricao;
+        _formData['valor'] = recebeDadosListarDespesas.valor;
+        _formData['formaPagamento'] = recebeDadosListarDespesas.formaPagamento;
+        _formData['pagou'] = recebeDadosListarDespesas.pagou;
+        _formData['salario'] = recebeDadosListarDespesas.salario;
         descricaoController.text = _formData['descricao'];
         valorController.text = _formData['valor'].toString();
         salarioController.text = _formData['salario'].toString() ?? 0;
@@ -74,12 +70,15 @@ class _FormScreenState extends State<FormScreen> {
     final gastosProvider = Provider.of<ProviderGastos>(context);
 
     void addGastos() {
+      //VERIFICO SE O FORMULÁRIO NÃO É VÁLIDO. SE ELE FOR INVÁLIDO, SÓ RETORNA PARA O FORMULÁRIO.
       if (!_key.currentState.validate()) {
         return;
       }
 
+      //SALVA OS DADOS DO FORMULÁRIO.
       _key.currentState.save();
 
+      //GUARDA TODOS OS DADOS DIGITADOS NO FORMULÁRIO.
       final valuesGastos = ProviderGastos(
         id: _formData['id'],
         descricao: _formData['descricao'],
@@ -89,12 +88,17 @@ class _FormScreenState extends State<FormScreen> {
         salario: double.parse(_formData['salario']),
       );
 
+      //SE O ID FOR NULLO, QUER DIZER QUE É UM NOVO USUÁRIO, SENDO ASSIM, CADASTRE O NOVO USUÁRIO.
       if (_formData['id'] == null) {
+        //ADICIONA NOVO USUÁRIO.
         gastosProvider.adicionarGastos(valuesGastos);
+        //CALCULA OS GASTOS.
         gastosProvider.calcularGastos();
         fieldSalario = false;
       } else if (_formData['id'] != null) {
+        //SE FOR UM ID EXISTENTE, CHAMA O MÉTODO DE ATUALIZAR.
         gastosProvider.atualizarGastos(valuesGastos);
+        //CALCULA OS GASTOS.
         gastosProvider.calcularGastos();
       }
     }
@@ -114,7 +118,7 @@ class _FormScreenState extends State<FormScreen> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Image.asset(
-              'assets/images/cartao.png',
+              'assets/images/download.png',
               fit: BoxFit.cover,
             ),
           ),
@@ -208,8 +212,8 @@ class _FormScreenState extends State<FormScreen> {
                       width: double.infinity,
                       child: TextButton.icon(
                         style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.all<Color>(Colors.grey),
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                              Colors.blueAccent),
                         ),
                         onPressed: () {
                           addGastos();
@@ -226,8 +230,8 @@ class _FormScreenState extends State<FormScreen> {
                       width: double.infinity,
                       child: TextButton.icon(
                         style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.all<Color>(Colors.grey),
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                              Colors.blueAccent),
                         ),
                         onPressed: () {
                           Navigator.of(context).pushNamed(AppRoutes.FORM);

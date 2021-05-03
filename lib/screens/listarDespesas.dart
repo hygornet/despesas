@@ -13,6 +13,7 @@ class _ListarDespesasState extends State<ListarDespesas> {
   Future carregarLista;
   String salary = "";
 
+  //MÉTODO QUE RETORNA O SALÁRIO DO BANCO DE DADOS.
   getSalario() async {
     final carregar = await DbData.returnRecord().then((value) {
       salary = value.toString();
@@ -23,8 +24,10 @@ class _ListarDespesasState extends State<ListarDespesas> {
   @override
   void initState() {
     super.initState();
+    //LISTA TODAS AS DESPESAS CADASTRADAS NO BANCO DE DADOS.
     carregarLista =
         Provider.of<ProviderGastos>(context, listen: false).listarDespesas();
+    //GUARDO A INFORMAÇÃO DO SALÁRIO DO BANCO DE DADOS NA VARIÁVEL SALÁRIO.
     salary = getSalario().toString();
   }
 
@@ -44,15 +47,8 @@ class _ListarDespesasState extends State<ListarDespesas> {
             ))
         .toList();
 
-    // bool verificarLista() {
-    //   if (provider.valorTotal == null) {
-    //     return false;
-    //   } else {
-    //     return true;
-    //   }
-    // }
-
-    bool existData() {
+    //VERIFICA SE A LISTA É VAZIA.
+    bool contemDados() {
       if (provider.lenghtList == 0) {
         return false;
       } else {
@@ -60,7 +56,8 @@ class _ListarDespesasState extends State<ListarDespesas> {
       }
     }
 
-    bool verificaSobrouNegativo() {
+    //VERIFICA SE O QUE SOBROU É NEGATIVO OU NÃO.
+    bool resultadoSobrouNegativo() {
       if (provider.diferenca() < 0) {
         return true;
       } else {
@@ -76,7 +73,7 @@ class _ListarDespesasState extends State<ListarDespesas> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Image.asset(
-              'assets/images/cartao.png',
+              'assets/images/download.png',
               fit: BoxFit.cover,
             ),
           ),
@@ -97,7 +94,7 @@ class _ListarDespesasState extends State<ListarDespesas> {
                 } else if (snapshot.connectionState == ConnectionState.none) {
                   return Text('Sem conexão');
                 } else {
-                  return existData()
+                  return contemDados()
                       ? DataTable(
                           columnSpacing: MediaQuery.of(context).size.width / 9,
                           showBottomBorder: true,
@@ -177,7 +174,7 @@ class _ListarDespesasState extends State<ListarDespesas> {
                             )),
                           ],
                         );
-                }
+                } //FIM DO FUTURE
               },
             ),
             SizedBox(
@@ -189,14 +186,19 @@ class _ListarDespesasState extends State<ListarDespesas> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  existData()
-                      ? resultadoCalculoDespesa(salary, Colors.blue, 'Salario')
+                  contemDados()
+                      ? resultadoCalculoDespesa(
+                          salary,
+                          Colors.blue,
+                          'Salario',
+                        )
                       : Text(''),
                   SizedBox(height: 10),
                   resultadoCalculoDespesa(
-                      provider.calcularGastos().toStringAsFixed(2),
-                      Colors.red,
-                      'Total de Gastos'),
+                    provider.calcularGastos().toStringAsFixed(2),
+                    Colors.red,
+                    'Total de Gastos',
+                  ),
                   SizedBox(height: 10),
                   Container(
                     alignment: Alignment.center,
@@ -205,7 +207,7 @@ class _ListarDespesasState extends State<ListarDespesas> {
                     decoration: BoxDecoration(
                       border: Border.all(
                         width: 2,
-                        color: verificaSobrouNegativo()
+                        color: resultadoSobrouNegativo()
                             ? Colors.red
                             : Colors.green,
                       ),
@@ -215,7 +217,7 @@ class _ListarDespesasState extends State<ListarDespesas> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        verificaSobrouNegativo()
+                        resultadoSobrouNegativo()
                             ? Column(
                                 children: [
                                   Text('Você está devendo:'),
@@ -240,28 +242,10 @@ class _ListarDespesasState extends State<ListarDespesas> {
                               ),
                       ],
                     ),
-                  )
-                  // resultadoCalculoDespesa(
-                  //     provider.diferenca().toStringAsFixed(2),
-                  //     Colors.green,
-                  //     'Sobrou'),
+                  ),
                 ],
               ),
             )
-            // : Column(
-            //     mainAxisAlignment: MainAxisAlignment.center,
-            //     crossAxisAlignment: CrossAxisAlignment.center,
-            //     children: [
-            //       SizedBox(height: 10),
-            //       Text(
-            //         'Ops! Você não tem despesa cadastrada...',
-            //         style: TextStyle(
-            //           fontSize: 15,
-            //           fontWeight: FontWeight.bold,
-            //         ),
-            //       ),
-            //     ],
-            //   ),
           ],
         ),
       ),

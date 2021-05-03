@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Despesas',
         theme: ThemeData(
-          primarySwatch: Colors.grey,
+          primarySwatch: Colors.blue,
         ),
         routes: {
           AppRoutes.HOME: (ctx) => FormScreen(),

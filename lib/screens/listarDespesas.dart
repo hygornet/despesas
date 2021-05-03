@@ -1,3 +1,4 @@
+import 'package:despesastable/database/db_data.dart';
 import 'package:despesastable/provider/providerGastos.dart';
 import 'package:despesastable/utils/approutes.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,24 @@ class ListarDespesas extends StatefulWidget {
 }
 
 class _ListarDespesasState extends State<ListarDespesas> {
+  Future carregarLista;
+  String salary = "";
+
+  getSalario() async {
+    final carregar = await DbData.returnRecord().then((value) {
+      salary = value.toString();
+    });
+    return carregar;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    carregarLista =
+        Provider.of<ProviderGastos>(context, listen: false).listarDespesas();
+    salary = getSalario().toString();
+  }
+
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<ProviderGastos>(context);
@@ -25,13 +44,13 @@ class _ListarDespesasState extends State<ListarDespesas> {
             ))
         .toList();
 
-    bool verificarLista() {
-      if (provider.valorTotal == null) {
-        return false;
-      } else {
-        return true;
-      }
-    }
+    // bool verificarLista() {
+    //   if (provider.valorTotal == null) {
+    //     return false;
+    //   } else {
+    //     return true;
+    //   }
+    // }
 
     bool existData() {
       if (provider.lenghtList == 0) {
@@ -67,177 +86,182 @@ class _ListarDespesasState extends State<ListarDespesas> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            existData()
-                ? SingleChildScrollView(
-                    controller: ScrollController(),
-                    physics: ScrollPhysics(),
-                    scrollDirection: Axis.horizontal,
-                    child: DataTable(
-                      columnSpacing: MediaQuery.of(context).size.width / 9,
-                      showBottomBorder: true,
-                      columns: [
-                        DataColumn(
-                          label: Text('Descrição'),
-                          tooltip:
-                              'Se você clicar sobre a descrição irá excluir o registro.',
-                        ),
-                        DataColumn(
-                          label: Text('Valor'),
-                          tooltip:
-                              'Se você clicar sobre o valor você poderá atualizar o registro.',
-                        ),
-                        DataColumn(
-                          label: Flexible(child: Text('Pagamento')),
-                        ),
-                        DataColumn(label: Text('Pagou?')),
-                      ],
-                      rows: dados
-                          .map(
-                            (e) => DataRow(
-                              key: _headingRowKey,
-                              cells: [
-                                DataCell(
-                                  Text(
-                                    e.descricao.toString(),
-                                  ),
-                                  showEditIcon: true,
-                                  onTap: () {
-                                    Provider.of<ProviderGastos>(context,
-                                            listen: false)
-                                        .removeItem(e.id);
-                                    Provider.of<ProviderGastos>(context,
-                                            listen: false)
-                                        .diferenca();
-                                  },
-                                ),
-                                DataCell(
-                                  Text(
-                                    'R\$ ${e.valor.toStringAsFixed(2)}',
-                                  ),
-                                  showEditIcon: true,
-                                  onTap: () {
-                                    Navigator.of(context).pushNamed(
-                                        AppRoutes.HOME,
-                                        arguments: e);
-                                  },
-                                ),
-                                DataCell(
-                                  FittedBox(
-                                    child: Text(
-                                      e.formaPagamento,
-                                    ),
-                                  ),
-                                ),
-                                DataCell(
-                                  Text(e.pagou),
-                                ),
-                              ],
+            FutureBuilder(
+              future: carregarLista,
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return Text('Erro');
+                } else if (snapshot.connectionState ==
+                    ConnectionState.waiting) {
+                  return Text('...');
+                } else if (snapshot.connectionState == ConnectionState.none) {
+                  return Text('Sem conexão');
+                } else {
+                  return existData()
+                      ? DataTable(
+                          columnSpacing: MediaQuery.of(context).size.width / 9,
+                          showBottomBorder: true,
+                          columns: [
+                            DataColumn(
+                              label: Text('Descrição'),
+                              tooltip:
+                                  'Se você clicar sobre a descrição irá excluir o registro.',
                             ),
-                          )
-                          .toList(),
-                    ),
-                  )
-                : Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Center(
-                          child: Image.asset(
-                        "assets/images/money-png.png",
-                        fit: BoxFit.cover,
-                        height: 150,
-                      )),
-                    ],
-                  ),
+                            DataColumn(
+                              label: Text('Valor'),
+                              tooltip:
+                                  'Se você clicar sobre o valor você poderá atualizar o registro.',
+                            ),
+                            DataColumn(
+                              label: Flexible(child: Text('Pagamento')),
+                            ),
+                            DataColumn(label: Text('Pagou?')),
+                          ],
+                          rows: dados
+                              .map(
+                                (e) => DataRow(
+                                  key: _headingRowKey,
+                                  cells: [
+                                    DataCell(
+                                      Text(
+                                        e.descricao.toString(),
+                                      ),
+                                      showEditIcon: true,
+                                      onTap: () {
+                                        Provider.of<ProviderGastos>(context,
+                                                listen: false)
+                                            .removeItem(e.id);
+                                        Provider.of<ProviderGastos>(context,
+                                                listen: false)
+                                            .diferenca();
+                                      },
+                                    ),
+                                    DataCell(
+                                      Text(
+                                        'R\$ ${e.valor.toStringAsFixed(2)}',
+                                      ),
+                                      showEditIcon: true,
+                                      onTap: () {
+                                        Navigator.of(context).pushNamed(
+                                            AppRoutes.HOME,
+                                            arguments: e);
+                                      },
+                                    ),
+                                    DataCell(
+                                      FittedBox(
+                                        child: Text(
+                                          e.formaPagamento,
+                                        ),
+                                      ),
+                                    ),
+                                    DataCell(
+                                      Text(e.pagou),
+                                    ),
+                                  ],
+                                ),
+                              )
+                              .toList(),
+                        )
+                      : Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              height: 20,
+                            ),
+                            Center(
+                                child: Image.asset(
+                              "assets/images/money-png.png",
+                              fit: BoxFit.cover,
+                              height: 150,
+                            )),
+                          ],
+                        );
+                }
+              },
+            ),
             SizedBox(
               height: 10,
             ),
-            verificarLista()
-                ? Padding(
-                    padding: const EdgeInsets.all(8.0),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  existData()
+                      ? resultadoCalculoDespesa(salary, Colors.blue, 'Salario')
+                      : Text(''),
+                  SizedBox(height: 10),
+                  resultadoCalculoDespesa(
+                      provider.calcularGastos().toStringAsFixed(2),
+                      Colors.red,
+                      'Total de Gastos'),
+                  SizedBox(height: 10),
+                  Container(
+                    alignment: Alignment.center,
+                    width: 200,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        width: 2,
+                        color: verificaSobrouNegativo()
+                            ? Colors.red
+                            : Colors.green,
+                      ),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        existData()
-                            ? resultadoCalculoDespesa(
-                                dados.first.salario.toStringAsFixed(2),
-                                Colors.blue,
-                                'Salario')
-                            : Text(''),
-                        SizedBox(height: 10),
-                        resultadoCalculoDespesa(
-                            provider.calcularGastos().toStringAsFixed(2),
-                            Colors.red,
-                            'Total de Gastos'),
-                        SizedBox(height: 10),
-                        Container(
-                          alignment: Alignment.center,
-                          width: 200,
-                          height: 50,
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              width: 2,
-                              color: verificaSobrouNegativo()
-                                  ? Colors.red
-                                  : Colors.green,
-                            ),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              verificaSobrouNegativo()
-                                  ? Column(
-                                      children: [
-                                        Text('Você está devendo:'),
-                                        Text(
-                                          'R\$ ${provider.diferenca().toStringAsFixed(2)}',
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ],
-                                    )
-                                  : Column(
-                                      children: [
-                                        Text('Sobrou'),
-                                        Text(
-                                          'R\$ ${provider.diferenca().toStringAsFixed(2)}',
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ],
+                        verificaSobrouNegativo()
+                            ? Column(
+                                children: [
+                                  Text('Você está devendo:'),
+                                  Text(
+                                    'R\$ ${provider.diferenca().toStringAsFixed(2)}',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
                                     ),
-                            ],
-                          ),
-                        )
-                        // resultadoCalculoDespesa(
-                        //     provider.diferenca().toStringAsFixed(2),
-                        //     Colors.green,
-                        //     'Sobrou'),
+                                  ),
+                                ],
+                              )
+                            : Column(
+                                children: [
+                                  Text('Sobrou'),
+                                  Text(
+                                    'R\$ ${provider.diferenca().toStringAsFixed(2)}',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
                       ],
                     ),
                   )
-                : Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      SizedBox(height: 10),
-                      Text(
-                        'Ops! Você não tem despesa cadastrada...',
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
+                  // resultadoCalculoDespesa(
+                  //     provider.diferenca().toStringAsFixed(2),
+                  //     Colors.green,
+                  //     'Sobrou'),
+                ],
+              ),
+            )
+            // : Column(
+            //     mainAxisAlignment: MainAxisAlignment.center,
+            //     crossAxisAlignment: CrossAxisAlignment.center,
+            //     children: [
+            //       SizedBox(height: 10),
+            //       Text(
+            //         'Ops! Você não tem despesa cadastrada...',
+            //         style: TextStyle(
+            //           fontSize: 15,
+            //           fontWeight: FontWeight.bold,
+            //         ),
+            //       ),
+            //     ],
+            //   ),
           ],
         ),
       ),

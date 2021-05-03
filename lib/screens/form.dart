@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:despesastable/database/db_data.dart';
 import 'package:despesastable/provider/providerGastos.dart';
 import 'package:despesastable/screens/listarDespesas.dart';
 import 'package:despesastable/utils/approutes.dart';
@@ -31,10 +32,17 @@ class _FormScreenState extends State<FormScreen> {
     'Transferência',
   ];
 
+  getSalario() async {
+    final carregar = await DbData.returnRecord()
+        .then((value) => salarioController.text = value.toString());
+    return carregar;
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    getSalario().toString();
   }
 
   @override

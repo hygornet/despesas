@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:despesastable/database/db_data.dart';
 import 'package:flutter/cupertino.dart';
 
 class ProviderGastos with ChangeNotifier {
@@ -23,11 +24,23 @@ class ProviderGastos with ChangeNotifier {
 
   List<ProviderGastos> _item = [];
   List<ProviderGastos> get itemList => [..._item];
+
   int get lenghtList {
     return _item.length;
   }
 
-  void adicionarGastos(ProviderGastos gastos) {
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'descricao': descricao,
+      'valor': valor,
+      'formaPagamento': formaPagamento,
+      'pagou': pagou,
+      'salario': salario,
+    };
+  }
+
+  Future<void> adicionarGastos(ProviderGastos gastos) async {
     _item.add(
       ProviderGastos(
         id: Random().nextInt(1000),
@@ -38,6 +51,35 @@ class ProviderGastos with ChangeNotifier {
         salario: gastos.salario,
       ),
     );
+    DbData.insert(
+      'despesas',
+      {
+        'id': gastos.id,
+        'descricao': gastos.descricao,
+        'valor': gastos.valor,
+        'formaPagamento': gastos.formaPagamento,
+        'pagou': gastos.pagou,
+        'salario': gastos.salario,
+      },
+    );
+
+    notifyListeners();
+  }
+
+  Future<void> listarDespesas() async {
+    final dataList = await DbData.getData('despesas');
+    _item = dataList
+        .map(
+          (item) => ProviderGastos(
+            id: item['id'],
+            descricao: item['descricao'],
+            valor: item['valor'],
+            formaPagamento: item['formaPagamento'],
+            pagou: item['pagou'],
+            salario: item['salario'],
+          ),
+        )
+        .toList();
     notifyListeners();
   }
 
@@ -64,6 +106,7 @@ class ProviderGastos with ChangeNotifier {
 
     if (index >= 0) {
       _item.removeWhere((gastos) => gastos.id == id);
+      DbData.deletarDespesa('despesas', id);
       notifyListeners();
     }
   }
@@ -76,6 +119,16 @@ class ProviderGastos with ChangeNotifier {
 
     if (index >= 0) {
       _item[index] = gastos;
+      DbData.update(
+          'despesas',
+          ProviderGastos(
+            id: gastos.id,
+            descricao: gastos.descricao,
+            valor: gastos.valor,
+            formaPagamento: gastos.formaPagamento,
+            pagou: gastos.pagou,
+            salario: gastos.salario,
+          ));
       notifyListeners();
     }
   }

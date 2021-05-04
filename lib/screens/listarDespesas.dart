@@ -11,7 +11,7 @@ class ListarDespesas extends StatefulWidget {
 
 class _ListarDespesasState extends State<ListarDespesas> {
   Future carregarLista;
-  String salary = "";
+  dynamic salary;
 
   //MÉTODO QUE RETORNA O SALÁRIO DO BANCO DE DADOS.
   getSalario() async {
@@ -25,9 +25,13 @@ class _ListarDespesasState extends State<ListarDespesas> {
   void initState() {
     super.initState();
     //LISTA TODAS AS DESPESAS CADASTRADAS NO BANCO DE DADOS.
+
     carregarLista =
         Provider.of<ProviderGastos>(context, listen: false).listarDespesas();
     //GUARDO A INFORMAÇÃO DO SALÁRIO DO BANCO DE DADOS NA VARIÁVEL SALÁRIO.
+    if (Provider.of<ProviderGastos>(context, listen: false).lenghtList == 0) {
+      return;
+    }
     salary = getSalario().toString();
   }
 
@@ -80,23 +84,22 @@ class _ListarDespesasState extends State<ListarDespesas> {
         ],
       ),
       body: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             FutureBuilder(
               future: carregarLista,
               builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  return Text('Erro');
-                } else if (snapshot.connectionState ==
-                    ConnectionState.waiting) {
-                  return Text('...');
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: Text('Carregando...'));
                 } else if (snapshot.connectionState == ConnectionState.none) {
-                  return Text('Sem conexão');
+                  return Text(
+                      'Ops, infelizmente houve algum problema.\nEntre em contato com o dev!');
                 } else {
                   return contemDados()
                       ? DataTable(
-                          columnSpacing: MediaQuery.of(context).size.width / 9,
+                          columnSpacing: MediaQuery.of(context).size.width / 15,
                           showBottomBorder: true,
                           columns: [
                             DataColumn(

@@ -26,6 +26,7 @@ dependencies:
   provider:  
   sqflite: ^2.0.0+3
   path:
+  flutter_phoenix: ^1.0.0
 
 
   # The following adds the Cupertino Icons font to your application.

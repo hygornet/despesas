@@ -9,7 +9,7 @@ class DbData {
       path.join(dbPath, 'despesas.db'),
       onCreate: (db, version) {
         return db.execute(
-            "CREATE TABLE despesas (id INTEGER PRIMARY KEY AUTOINCREMENT, descricao TEXT, valor REAL,  formaPagamento TEXT, pagou TEXT, salario REAL)");
+            "CREATE TABLE despesas (id INTEGER PRIMARY KEY AUTOINCREMENT, descricao TEXT, valor REAL, formaPagamento TEXT, pagou TEXT, salario REAL)");
       },
       version: 1,
     );
@@ -51,14 +51,14 @@ class DbData {
     return db.query(table);
   }
 
-  // static Future<void> criarTabela() async {
-  //   final db = await DbData.database();
-  //   await db.execute(
-  //       "CREATE TABLE IF EXISTS despesas (id INTEGER PRIMARY KEY AUTOINCREMENT, descricao TEXT, valor REAL,  formaPagamento TEXT, pagou TEXT, salario REAL)");
-  // }
+  static Future<void> criarTabela() async {
+    final db = await DbData.database();
+    await db.execute(
+        "CREATE TABLE IF NOT EXISTS despesas (id INTEGER PRIMARY KEY AUTOINCREMENT, descricao TEXT, valor REAL,  formaPagamento TEXT, pagou TEXT, salario REAL)");
+  }
 
-  // static Future<void> deletarTabela() async {
-  //   final db = await DbData.database();
-  //   await db.execute("DROP TABLE IF EXISTS despesas");
-  // }
+  static Future<void> deletarTabela() async {
+    final db = await DbData.database();
+    await db.execute("DROP TABLE IF EXISTS despesas");
+  }
 }

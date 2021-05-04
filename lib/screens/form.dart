@@ -3,6 +3,7 @@ import 'package:despesastable/provider/providerGastos.dart';
 import 'package:despesastable/utils/approutes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:provider/provider.dart';
 
 class FormScreen extends StatefulWidget {
@@ -38,6 +39,9 @@ class _FormScreenState extends State<FormScreen> {
   @override
   void initState() {
     super.initState();
+    if (Provider.of<ProviderGastos>(context, listen: false).lenghtList == 0) {
+      return;
+    }
     getSalario().toString();
   }
 
@@ -242,6 +246,52 @@ class _FormScreenState extends State<FormScreen> {
                         ),
                         label: Text(
                           'Visualizar gastos',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                    Container(
+                      width: double.infinity,
+                      child: TextButton.icon(
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                              Colors.blueAccent),
+                        ),
+                        onPressed: () async {
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: Text('Confirmação de ação'),
+                              content: Text(
+                                  'Você irá resetar todas suas despesas.\nVocê está certo disso?'),
+                              actions: [
+                                ElevatedButton(
+                                  child: Text('Não'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                                ElevatedButton(
+                                  onPressed: () async {
+                                    await DbData.deletarTabela()
+                                        .then((value) async {
+                                      await DbData.criarTabela();
+                                    });
+
+                                    Phoenix.rebirth(context);
+                                  },
+                                  child: Text('Sim'),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                        icon: Icon(
+                          Icons.delete_forever_outlined,
+                          color: Colors.white,
+                        ),
+                        label: Text(
+                          'Reiniciar',
                           style: TextStyle(color: Colors.white),
                         ),
                       ),

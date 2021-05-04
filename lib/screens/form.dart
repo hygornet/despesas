@@ -30,18 +30,18 @@ class _FormScreenState extends State<FormScreen> {
     'Transferência',
   ];
 
+  ProviderGastos gastos = ProviderGastos();
+
   getSalario() async {
-    final _carregarSalario = await DbData.returnRecord()
+    final carregarSalario = await DbData.returnRecord()
         .then((value) => salarioController.text = value.toString());
-    return _carregarSalario;
+    return carregarSalario;
   }
 
   @override
   void initState() {
     super.initState();
-    if (Provider.of<ProviderGastos>(context, listen: false).lenghtList == 0) {
-      return;
-    }
+
     getSalario().toString();
   }
 
@@ -62,7 +62,7 @@ class _FormScreenState extends State<FormScreen> {
         _formData['salario'] = recebeDadosListarDespesas.salario;
         descricaoController.text = _formData['descricao'];
         valorController.text = _formData['valor'].toString();
-        salarioController.text = _formData['salario'].toString() ?? 0;
+        salarioController.text = _formData['salario'].toString();
         fieldSalario = false;
       }
     }
@@ -140,6 +140,11 @@ class _FormScreenState extends State<FormScreen> {
                     TextFormField(
                       onSaved: (newValue) => _formData['salario'] = newValue,
                       enabled: fieldSalario,
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return 'Por favor, preencha o campo.';
+                        }
+                      },
                       textInputAction: TextInputAction.next,
                       keyboardType: TextInputType.number,
                       controller: salarioController,
@@ -152,6 +157,11 @@ class _FormScreenState extends State<FormScreen> {
                     TextFormField(
                       onSaved: (newValue) => _formData['descricao'] = newValue,
                       controller: descricaoController,
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return 'Por favor, preencha o campo.';
+                        }
+                      },
                       textInputAction: TextInputAction.next,
                       decoration: InputDecoration(
                         icon: Icon(Icons.description_outlined),
@@ -162,6 +172,11 @@ class _FormScreenState extends State<FormScreen> {
                     TextFormField(
                       onSaved: (newValue) => _formData['valor'] = newValue,
                       controller: valorController,
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return 'Por favor, preencha o campo.';
+                        }
+                      },
                       keyboardType: TextInputType.number,
                       onFieldSubmitted: (_) =>
                           node.unfocus(), // Submit and hide keyboard
@@ -222,6 +237,31 @@ class _FormScreenState extends State<FormScreen> {
                         onPressed: () {
                           addGastos();
                           clear();
+                          final snackBar = SnackBar(
+                            // background color of your snack-bar
+                            backgroundColor: Colors.green,
+                            // make the content property take a Row
+                            content: Row(
+                              children: <Widget>[
+                                // add your preferred icon here
+                                Icon(
+                                  Icons.add_box_rounded,
+                                  color: Colors.white,
+                                ),
+                                SizedBox(width: 10),
+                                // add your preferred text content here
+                                Text(
+                                  "Despesa cadastrada!",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            // the duration of your snack-bar
+                            duration: Duration(milliseconds: 1500),
+                          );
+                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
                         },
                         icon: Icon(Icons.add, color: Colors.white),
                         label: Text(

@@ -33,7 +33,7 @@ class _FormScreenState extends State<FormScreen> {
   ProviderGastos gastos = ProviderGastos();
 
   getSalario() async {
-    final carregarSalario = await DbData.returnRecord()
+    final carregarSalario = await DbData.retornarSalario()
         .then((value) => salarioController.text = value.toString());
     return carregarSalario;
   }
@@ -139,7 +139,6 @@ class _FormScreenState extends State<FormScreen> {
                   children: [
                     TextFormField(
                       onSaved: (newValue) => _formData['salario'] = newValue,
-                      enabled: fieldSalario,
                       validator: (value) {
                         if (value.isEmpty) {
                           return 'Por favor, preencha o campo.';

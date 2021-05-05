@@ -33,7 +33,7 @@ class DbData {
     await db.delete('despesas', where: "id = ?", whereArgs: [id]);
   }
 
-  static Future returnRecord() async {
+  static Future retornarSalario() async {
     ProviderGastos gastos = ProviderGastos();
     final db = await DbData.database();
     List<Map> result = await db.rawQuery("SELECT salario FROM despesas");

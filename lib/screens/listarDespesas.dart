@@ -16,8 +16,8 @@ class _ListarDespesasState extends State<ListarDespesas> {
 
   //MÉTODO QUE RETORNA O SALÁRIO DO BANCO DE DADOS.
   Future getSalario() async {
-    final carregarSalario =
-        await DbData.returnRecord().then((value) => salary = value.toString());
+    final carregarSalario = await DbData.retornarSalario()
+        .then((value) => salary = value.toString());
     return carregarSalario;
   }
 
@@ -101,6 +101,8 @@ class _ListarDespesasState extends State<ListarDespesas> {
                 } else {
                   return contemDados()
                       ? DataTable(
+                          sortAscending: true,
+                          sortColumnIndex: 0,
                           columnSpacing: MediaQuery.of(context).size.width / 15,
                           showBottomBorder: true,
                           columns: [
@@ -117,7 +119,9 @@ class _ListarDespesasState extends State<ListarDespesas> {
                             DataColumn(
                               label: Flexible(child: Text('Pagamento')),
                             ),
-                            DataColumn(label: Text('Pagou?')),
+                            DataColumn(
+                              label: Text('Pagou?'),
+                            ),
                           ],
                           rows: dados
                               .map(
@@ -157,9 +161,26 @@ class _ListarDespesasState extends State<ListarDespesas> {
                                         ),
                                       ),
                                     ),
-                                    DataCell(
-                                      Text(e.pagou),
-                                    ),
+                                    if (e.pagou == "Sim")
+                                      DataCell(
+                                        Text(
+                                          e.pagou,
+                                          style: TextStyle(
+                                            color: Colors.green,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    if (e.pagou == "Não")
+                                      DataCell(
+                                        Text(
+                                          e.pagou,
+                                          style: TextStyle(
+                                            color: Colors.red,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
                                   ],
                                 ),
                               )

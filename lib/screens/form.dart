@@ -17,7 +17,6 @@ class _FormScreenState extends State<FormScreen> {
   var pagouController = TextEditingController();
   var formaPagamentoController = TextEditingController();
   var salarioController = TextEditingController();
-  bool fieldSalario = true;
   var _key = GlobalKey<FormState>();
   var _formData = Map<String, dynamic>();
   List<String> _options = ['Sim', 'Não'];
@@ -36,6 +35,34 @@ class _FormScreenState extends State<FormScreen> {
     final carregarSalario = await DbData.retornarSalario()
         .then((value) => salarioController.text = value.toString());
     return carregarSalario;
+  }
+
+  void showSnackBar(String operation) {
+    final snackBar = SnackBar(
+      // background color of your snack-bar
+      backgroundColor: Colors.green,
+      // make the content property take a Row
+      content: Row(
+        children: <Widget>[
+          // add your preferred icon here
+          Icon(
+            Icons.add_box_rounded,
+            color: Colors.white,
+          ),
+          SizedBox(width: 10),
+          // add your preferred text content here
+          Text(
+            "Despesa $operation!",
+            style: TextStyle(
+              color: Colors.white,
+            ),
+          ),
+        ],
+      ),
+      // the duration of your snack-bar
+      duration: Duration(milliseconds: 1500),
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   @override
@@ -63,7 +90,6 @@ class _FormScreenState extends State<FormScreen> {
         descricaoController.text = _formData['descricao'];
         valorController.text = _formData['valor'].toString();
         salarioController.text = _formData['salario'].toString();
-        fieldSalario = false;
       }
     }
   }
@@ -98,12 +124,15 @@ class _FormScreenState extends State<FormScreen> {
         gastosProvider.adicionarGastos(valuesGastos);
         //CALCULA OS GASTOS.
         gastosProvider.calcularGastos();
-        fieldSalario = false;
+        //EXIBE UMA MENSAGEM NO RODAPE DO APLICATIVO INFORMANDO QUE A DESPESA FOI CADASTRADA.
+        showSnackBar('Cadastrada');
       } else if (_formData['id'] != null) {
         //SE FOR UM ID EXISTENTE, CHAMA O MÉTODO DE ATUALIZAR.
         gastosProvider.atualizarGastos(valuesGastos);
         //CALCULA OS GASTOS.
         gastosProvider.calcularGastos();
+        //EXIBE UMA MENSAGEM NO RODAPE DO APLICATIVO INFORMANDO QUE A DESPESA FOI CADASTRADA.
+        showSnackBar('Atualizada');
       }
     }
 
@@ -236,31 +265,6 @@ class _FormScreenState extends State<FormScreen> {
                         onPressed: () {
                           addGastos();
                           clear();
-                          final snackBar = SnackBar(
-                            // background color of your snack-bar
-                            backgroundColor: Colors.green,
-                            // make the content property take a Row
-                            content: Row(
-                              children: <Widget>[
-                                // add your preferred icon here
-                                Icon(
-                                  Icons.add_box_rounded,
-                                  color: Colors.white,
-                                ),
-                                SizedBox(width: 10),
-                                // add your preferred text content here
-                                Text(
-                                  "Despesa cadastrada!",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            // the duration of your snack-bar
-                            duration: Duration(milliseconds: 1500),
-                          );
-                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
                         },
                         icon: Icon(Icons.add, color: Colors.white),
                         label: Text(
@@ -311,6 +315,7 @@ class _FormScreenState extends State<FormScreen> {
                                   },
                                 ),
                                 ElevatedButton(
+                                  child: Text('Sim'),
                                   onPressed: () async {
                                     await DbData.deletarTabela()
                                         .then((value) async {
@@ -319,7 +324,6 @@ class _FormScreenState extends State<FormScreen> {
 
                                     Phoenix.rebirth(context);
                                   },
-                                  child: Text('Sim'),
                                 ),
                               ],
                             ),

@@ -71,6 +71,34 @@ class _ListarDespesasState extends State<ListarDespesas> {
       }
     }
 
+    void showSnackBar() {
+      final snackBar = SnackBar(
+        // background color of your snack-bar
+        backgroundColor: Colors.red,
+        // make the content property take a Row
+        content: Row(
+          children: <Widget>[
+            // add your preferred icon here
+            Icon(
+              Icons.highlight_remove_rounded,
+              color: Colors.white,
+            ),
+            SizedBox(width: 10),
+            // add your preferred text content here
+            Text(
+              "Despesa excluída!",
+              style: TextStyle(
+                color: Colors.white,
+              ),
+            ),
+          ],
+        ),
+        // the duration of your snack-bar
+        duration: Duration(milliseconds: 1500),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Lista de Despesas'),
@@ -101,8 +129,6 @@ class _ListarDespesasState extends State<ListarDespesas> {
                 } else {
                   return contemDados()
                       ? DataTable(
-                          sortAscending: true,
-                          sortColumnIndex: 0,
                           columnSpacing: MediaQuery.of(context).size.width / 15,
                           showBottomBorder: true,
                           columns: [
@@ -138,6 +164,7 @@ class _ListarDespesasState extends State<ListarDespesas> {
                                         Provider.of<ProviderGastos>(context,
                                                 listen: false)
                                             .removeItem(e.id);
+                                        showSnackBar();
                                         Provider.of<ProviderGastos>(context,
                                                 listen: false)
                                             .diferenca();

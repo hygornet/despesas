@@ -25,6 +25,7 @@ class ProviderGastos with ChangeNotifier {
   List<ProviderGastos> _item = [];
   List<ProviderGastos> get itemList => [..._item];
 
+  //Tamanho da lista.
   int get lenghtList {
     return _item.length;
   }

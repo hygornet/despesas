@@ -43,13 +43,13 @@ class _ListarDespesasState extends State<ListarDespesas> {
     LocalKey _headingRowKey;
 
     List<ProviderGastos> dados = provider.itemList
-        .map((e) => ProviderGastos(
-              id: e.id,
-              descricao: e.descricao,
-              valor: e.valor,
-              formaPagamento: e.formaPagamento,
-              pagou: e.pagou,
-              salario: e.salario,
+        .map((gastos) => ProviderGastos(
+              id: gastos.id,
+              descricao: gastos.descricao,
+              valor: gastos.valor,
+              formaPagamento: gastos.formaPagamento,
+              pagou: gastos.pagou,
+              salario: gastos.salario,
             ))
         .toList();
 
@@ -63,7 +63,7 @@ class _ListarDespesasState extends State<ListarDespesas> {
     }
 
     //VERIFICA SE O QUE SOBROU É NEGATIVO OU NÃO.
-    bool resultadoSobrouNegativo() {
+    bool resultadoIsNegative() {
       if (provider.diferenca() < 0) {
         return true;
       } else {
@@ -73,18 +73,14 @@ class _ListarDespesasState extends State<ListarDespesas> {
 
     void showSnackBar() {
       final snackBar = SnackBar(
-        // background color of your snack-bar
         backgroundColor: Colors.red,
-        // make the content property take a Row
         content: Row(
           children: <Widget>[
-            // add your preferred icon here
             Icon(
               Icons.highlight_remove_rounded,
               color: Colors.white,
             ),
             SizedBox(width: 10),
-            // add your preferred text content here
             Text(
               "Despesa excluída!",
               style: TextStyle(
@@ -93,7 +89,6 @@ class _ListarDespesasState extends State<ListarDespesas> {
             ),
           ],
         ),
-        // the duration of your snack-bar
         duration: Duration(milliseconds: 1500),
       );
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
@@ -151,19 +146,19 @@ class _ListarDespesasState extends State<ListarDespesas> {
                           ],
                           rows: dados
                               .map(
-                                (e) => DataRow(
+                                (gastos) => DataRow(
                                   key: _headingRowKey,
                                   cells: [
                                     DataCell(
                                       Text(
                                         toBeginningOfSentenceCase(
-                                            e.descricao.toString()),
+                                            gastos.descricao.toString()),
                                       ),
                                       showEditIcon: true,
                                       onTap: () {
                                         Provider.of<ProviderGastos>(context,
                                                 listen: false)
-                                            .removeItem(e.id);
+                                            .removeItem(gastos.id);
                                         showSnackBar();
                                         Provider.of<ProviderGastos>(context,
                                                 listen: false)
@@ -172,36 +167,36 @@ class _ListarDespesasState extends State<ListarDespesas> {
                                     ),
                                     DataCell(
                                       Text(
-                                        'R\$ ${e.valor.toStringAsFixed(2)}',
+                                        'R\$ ${gastos.valor.toStringAsFixed(2)}',
                                       ),
                                       showEditIcon: true,
                                       onTap: () {
                                         Navigator.of(context).pushNamed(
                                             AppRoutes.HOME,
-                                            arguments: e);
+                                            arguments: gastos);
                                       },
                                     ),
                                     DataCell(
                                       FittedBox(
                                         child: Text(
-                                          e.formaPagamento,
+                                          gastos.formaPagamento,
                                         ),
                                       ),
                                     ),
-                                    if (e.pagou == "Sim")
+                                    if (gastos.pagou == "Sim")
                                       DataCell(
                                         Text(
-                                          e.pagou,
+                                          gastos.pagou,
                                           style: TextStyle(
                                             color: Colors.green,
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
                                       ),
-                                    if (e.pagou == "Não")
+                                    if (gastos.pagou == "Não")
                                       DataCell(
                                         Text(
-                                          e.pagou,
+                                          gastos.pagou,
                                           style: TextStyle(
                                             color: Colors.red,
                                             fontWeight: FontWeight.bold,
@@ -228,7 +223,7 @@ class _ListarDespesasState extends State<ListarDespesas> {
                             )),
                           ],
                         );
-                } //FIM DO FUTURE
+                }
               },
             ),
             SizedBox(
@@ -261,9 +256,8 @@ class _ListarDespesasState extends State<ListarDespesas> {
                     decoration: BoxDecoration(
                       border: Border.all(
                         width: 2,
-                        color: resultadoSobrouNegativo()
-                            ? Colors.red
-                            : Colors.green,
+                        color:
+                            resultadoIsNegative() ? Colors.red : Colors.green,
                       ),
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -271,7 +265,7 @@ class _ListarDespesasState extends State<ListarDespesas> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        resultadoSobrouNegativo()
+                        resultadoIsNegative()
                             ? Column(
                                 children: [
                                   Text('Você está devendo:'),

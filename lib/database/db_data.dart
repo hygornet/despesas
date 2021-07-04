@@ -45,9 +45,7 @@ class DbData {
   }
 
   static Future<List<Map<String, dynamic>>> getData(String table) async {
-    //Iniicalizo o banco.
     final db = await DbData.database();
-    //Lê os dados do banco.
     return db.query(table);
   }
 

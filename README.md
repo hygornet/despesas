@@ -1,3 +1,4 @@
+
 # Despesas
 
 **PTBR**
@@ -18,3 +19,6 @@ Não se esqueça de abrir o arquivo pubspec.yaml e salvar (CTRL + S) o arquivo p
 
 
 ![flutter1](https://user-images.githubusercontent.com/20141630/124404643-27b11a80-dd12-11eb-9b71-b48ff2f1a0d1.jpg)
+![flutter2](https://user-images.githubusercontent.com/20141630/124404669-49120680-dd12-11eb-818f-2f2903f1af4a.jpg)
+![flutter3](https://user-images.githubusercontent.com/20141630/124404688-66df6b80-dd12-11eb-9b70-3ac0b5410f38.jpg)
+

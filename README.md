@@ -17,3 +17,4 @@ Clique em File -> Open e abra o projeto (pasta)<br>
 Não se esqueça de abrir o arquivo pubspec.yaml e salvar (CTRL + S) o arquivo para que os plugins sejam baixados<br>
 
 
+![flutter1](https://user-images.githubusercontent.com/20141630/124404643-27b11a80-dd12-11eb-9b71-b48ff2f1a0d1.jpg)

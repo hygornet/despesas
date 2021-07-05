@@ -10,7 +10,7 @@ It's something most people don't do (knowing how much you'll have to shell out t
 
 ## Como baixar o projeto
 
-Faça um fork do projeto (precisa ter uma conta no github)
+Faça um fork do projeto (precisa ter uma conta no github)<br>
 Abra o terminal do Visual Studio Code
 Acesse a pasta onde deseja salvar o aplicativo e digite: git clone link_do_projeto_no_seu_github
 Clique em File -> Open e abra o projeto (pasta)

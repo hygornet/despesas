@@ -12,7 +12,7 @@ It's something most people don't do (knowing how much you'll have to shell out t
 
 Faça um fork do projeto (precisa ter uma conta no github)<br>
 Abra o terminal do Visual Studio Code<br>
-Acesse a pasta onde deseja salvar o aplicativo e digite: git clone link_do_projeto_no_seu_github<br>
+Acesse a pasta onde deseja salvar o aplicativo e digite: git clone https://github.com/hygornet/despesas.git<br>
 Clique em File -> Open e abra o projeto (pasta)<br>
 Não se esqueça de abrir o arquivo pubspec.yaml e salvar (CTRL + S) o arquivo para que os plugins sejam baixados<br>
 

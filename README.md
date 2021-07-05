@@ -16,4 +16,4 @@ Acesse a pasta onde deseja salvar o aplicativo e digite: git clone link_do_proje
 Clique em File -> Open e abra o projeto (pasta)
 Não se esqueça de abrir o arquivo pubspec.yaml e salvar (CTRL + S) o arquivo para que os plugins sejam baixados
 
-![alt text](https://drive.google.com/file/d/1jCRt94H_DwV1F_KiWH_RRe3yZfRO3P_e/view)
+

@@ -44,6 +44,17 @@ class DbData {
     return result.first.values.first;
   }
 
+  static Future valorTotalPago() async {
+    double total = 0.0;
+    final db = await DbData.database();
+    var resp =
+        await db.rawQuery("SELECT valor FROM despesas WHERE pagou = 'Sim'");
+    resp.forEach((element) {
+      total += element['valor'];
+    });
+    return total;
+  }
+
   static Future<List<Map<String, dynamic>>> getData(String table) async {
     final db = await DbData.database();
     return db.query(table);

@@ -56,7 +56,6 @@ class _ListarDespesasState extends State<ListarDespesas> {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<ProviderGastos>(context);
-    LocalKey _headingRowKey;
 
     List<ProviderGastos> dados = provider.itemList
         .map((gastos) => ProviderGastos(
@@ -112,204 +111,107 @@ class _ListarDespesasState extends State<ListarDespesas> {
 
     return Scaffold(
       appBar: AppBar(
-        title: isSearch
-            ? TextField(
-                controller: searchController,
-                onChanged: (value) {
-                  if (value.trim().isNotEmpty) {
-                    setState(() {
-                      changeIconSearch = true;
-                    });
-                  } else {
-                    setState(() {
-                      changeIconSearch = false;
-                    });
-                  }
-                },
-                decoration: InputDecoration(
-                    labelText: 'Digite o gasto que deseja procurar...',
-                    labelStyle: TextStyle(
-                      color: Colors.white,
-                    )),
-                style: TextStyle(
-                  color: Colors.white,
-                ),
-              )
-            : Text('Lista de Despesas'),
+        title: Text('Lista de Despesas'),
         centerTitle: true,
-        actions: [
-          changeIconSearch
-              ? IconButton(
-                  onPressed: () {},
-                  icon: Icon(Icons.send_sharp),
-                )
-              : IconButton(
-                  onPressed: () {
-                    setState(() {
-                      isSearch = !isSearch;
-                    });
-                  },
-                  icon: Icon(Icons.search),
-                ),
-        ],
       ),
       body: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            FutureBuilder(
-              future: carregarLista,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: Text('Carregando...'));
-                } else if (snapshot.connectionState == ConnectionState.none) {
-                  return Text(
-                      'Ops, infelizmente houve algum problema.\nEntre em contato com o dev!');
-                } else {
-                  return Visibility(
-                    visible: contemDados(),
-                    replacement: _listaVazia(),
-                    child: DataTable(
-                      columnSpacing: MediaQuery.of(context).size.width / 15,
-                      showBottomBorder: true,
-                      columns: [
-                        DataColumn(
-                          label: Text('Descrição'),
-                          tooltip:
-                              'Se você clicar sobre a descrição irá excluir o registro.',
-                        ),
-                        DataColumn(
-                          label: Text('Valor'),
-                          tooltip:
-                              'Se você clicar sobre o valor você poderá atualizar o registro.',
-                        ),
-                        DataColumn(
-                          label: Flexible(child: Text('Pagamento')),
-                        ),
-                        DataColumn(
-                          label: Text('Pagou?'),
-                        ),
-                      ],
-                      rows: dados
-                          .map(
-                            (gastos) => DataRow(
-                              key: _headingRowKey,
-                              cells: [
-                                DataCell(
-                                  Text(
-                                    toBeginningOfSentenceCase(
-                                        gastos.descricao.toString()),
-                                  ),
-                                  showEditIcon: true,
-                                  onTap: () {
-                                    showSnackBar();
-                                    _removerGasto(context, gastos);
-                                    _diferenca(context);
-                                  },
-                                ),
-                                DataCell(
-                                  Text(
-                                    'R\$ ${gastos.valor.toStringAsFixed(2)}',
-                                  ),
-                                  showEditIcon: true,
-                                  onTap: () {
-                                    Navigator.of(context).pushNamed(
-                                        AppRoutes.HOME,
-                                        arguments: gastos);
-                                  },
-                                ),
-                                DataCell(
-                                  FittedBox(
-                                    child: Text(
-                                      gastos.formaPagamento,
-                                    ),
-                                  ),
-                                ),
-                                if (gastos.pagou == "Sim")
-                                  DataCell(
-                                    Text(
-                                      gastos.pagou,
-                                      style: TextStyle(
-                                        color: Colors.green,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                if (gastos.pagou == "Não")
-                                  DataCell(
-                                    Text(
-                                      gastos.pagou,
-                                      style: TextStyle(
-                                        color: Colors.red,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                              ],
-                            ),
-                          )
-                          .toList(),
-                    ),
-                  );
-                }
-              },
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  contemDados()
-                      ? _resultadoCalculo(
-                          salary,
-                          Colors.blue,
-                          'Salario',
-                        )
-                      : Text(''),
-                  SizedBox(height: 10),
-                  contemDados()
-                      ? _resultadoCalculo(
-                          valorPagoTotal,
-                          Colors.green,
-                          'Valor Pago',
-                        )
-                      : Text(''),
-                  SizedBox(height: 10),
-                  _resultadoCalculo(
-                    provider.calcularGastos().toStringAsFixed(2),
-                    Colors.red,
-                    'Total de Gastos',
-                  ),
-                  SizedBox(height: 10),
-                  Container(
-                    alignment: Alignment.center,
-                    width: 200,
-                    height: 50,
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        width: 2,
-                        color:
-                            resultadoIsNegative() ? Colors.red : Colors.green,
-                      ),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        resultadoIsNegative()
-                            ? _containerSobrou(provider, 'Você está devendo')
-                            : _containerSobrou(provider, 'Sobrou'),
-                      ],
-                    ),
-                  ),
+                  _boxValores(Colors.red, 'lib/assets/images/attention.png',
+                      'Falta Pagar'),
+                  _boxValores(
+                      Colors.purple, 'lib/assets/images/dollar.png', 'Sobrou'),
+                  _boxValores(
+                      Colors.green, 'lib/assets/images/check.png', 'Foi pago'),
                 ],
               ),
-            )
-          ],
+              SizedBox(height: 20),
+              ListView.builder(
+                shrinkWrap: true,
+                itemCount: dados.length,
+                itemBuilder: (context, index) {
+                  return Card(
+                    child: Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: 80,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 5,
+                            blurRadius: 4,
+                            offset: Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: ListTile(
+                        leading: CircleAvatar(
+                          backgroundColor: Colors.amber,
+                        ),
+                        title: Text(dados[index].descricao),
+                        subtitle: Text(dados[index].formaPagamento),
+                        trailing: Text(
+                            'R\$ ${dados[index].valor.toStringAsFixed(2)}'),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
         ),
+      ),
+    );
+  }
+
+  _boxValores(Color color, String image, String texto) {
+    return Container(
+      width: 120,
+      height: 120,
+      decoration: BoxDecoration(
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            spreadRadius: 5,
+            blurRadius: 4,
+            offset: Offset(0, 3),
+          ),
+        ],
+        borderRadius: BorderRadius.circular(10),
+        color: color,
+      ),
+      child: Column(
+        children: [
+          SizedBox(height: 10),
+          Image.asset(
+            image,
+            fit: BoxFit.cover,
+            height: 48,
+            width: 48,
+          ),
+          SizedBox(height: 10),
+          Text(
+            texto,
+            style: TextStyle(
+              color: Colors.white,
+            ),
+          ),
+          SizedBox(height: 10),
+          Text(
+            'R\$ 120,94',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+            ),
+          ),
+        ],
       ),
     );
   }

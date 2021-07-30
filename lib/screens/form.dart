@@ -171,6 +171,8 @@ class _FormScreenState extends State<FormScreen> {
                       validator: (value) {
                         if (value.isEmpty) {
                           return 'Por favor, preencha o campo.';
+                        } else {
+                          return null;
                         }
                       },
                       textInputAction: TextInputAction.next,
@@ -188,6 +190,8 @@ class _FormScreenState extends State<FormScreen> {
                       validator: (value) {
                         if (value.isEmpty) {
                           return 'Por favor, preencha o campo.';
+                        } else {
+                          return null;
                         }
                       },
                       textInputAction: TextInputAction.next,
@@ -203,6 +207,8 @@ class _FormScreenState extends State<FormScreen> {
                       validator: (value) {
                         if (value.isEmpty) {
                           return 'Por favor, preencha o campo.';
+                        } else {
+                          return null;
                         }
                       },
                       keyboardType: TextInputType.number,

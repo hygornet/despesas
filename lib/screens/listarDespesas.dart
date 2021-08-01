@@ -13,7 +13,7 @@ class ListarDespesas extends StatefulWidget {
 class _ListarDespesasState extends State<ListarDespesas> {
   Future carregarLista;
   String salary;
-  String valorPagoTotal;
+  String valorPagoSim;
   bool isSearch = false;
   bool changeIconSearch = false;
   var searchController = TextEditingController();
@@ -26,9 +26,9 @@ class _ListarDespesasState extends State<ListarDespesas> {
   }
 
   Future getPago() async {
-    final showPago = await DbData.valorTotalPago()
-        .then((value) => valorPagoTotal = value.toString());
-    return showPago;
+    valorPagoSim = await DbData.valorTotalPago()
+        .then((value) => valorPagoSim = value.toString());
+    return valorPagoSim;
   }
 
   @override
@@ -36,8 +36,8 @@ class _ListarDespesasState extends State<ListarDespesas> {
     super.initState();
 
     //LISTA TODAS AS DESPESAS CADASTRADAS NO BANCO DE DADOS.
-    carregarLista =
-        Provider.of<ProviderGastos>(context, listen: false).listarDespesas();
+    // carregarLista =
+    //     Provider.of<ProviderGastos>(context, listen: false).listarDespesas();
 
     //GUARDO A INFORMAÇÃO DO SALÁRIO DO BANCO DE DADOS NA VARIÁVEL SALÁRIO.
     getSalario().then((value) {
@@ -48,7 +48,7 @@ class _ListarDespesasState extends State<ListarDespesas> {
 
     getPago().then((value) {
       setState(() {
-        valorPagoTotal = value.toString();
+        valorPagoSim = value.toString();
       });
     });
   }
@@ -68,12 +68,11 @@ class _ListarDespesasState extends State<ListarDespesas> {
             ))
         .toList();
 
-    //VERIFICA SE A LISTA É VAZIA.
-    bool contemDados() {
-      if (provider.lenghtList == 0) {
-        return false;
-      } else {
+    bool existeDespesa() {
+      if (provider.lenghtList == null) {
         return true;
+      } else {
+        return false;
       }
     }
 
@@ -114,67 +113,94 @@ class _ListarDespesasState extends State<ListarDespesas> {
         title: Text('Lista de Despesas'),
         centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  _boxValores(Colors.red, 'lib/assets/images/attention.png',
-                      'Falta Pagar'),
-                  _boxValores(
-                      Colors.purple, 'lib/assets/images/dollar.png', 'Sobrou'),
-                  _boxValores(
-                      Colors.green, 'lib/assets/images/check.png', 'Foi pago'),
-                ],
-              ),
-              SizedBox(height: 20),
-              ListView.builder(
-                shrinkWrap: true,
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _boxValores(
+                    Colors.red,
+                    'lib/assets/images/1694347.png',
+                    'Despesa total',
+                    'R\$ ${Provider.of<ProviderGastos>(context, listen: false).calcularGastos().toString()}'),
+                resultadoIsNegative()
+                    ? _boxValores(
+                        Colors.red[700],
+                        'lib/assets/images/attention.png',
+                        'Devendo',
+                        'R\$ ${Provider.of<ProviderGastos>(context, listen: false).diferenca().toString()}',
+                      )
+                    : _boxValores(
+                        Colors.amber,
+                        'lib/assets/images/dollar.png',
+                        'Sobrando',
+                        'R\$ ${Provider.of<ProviderGastos>(context, listen: false).diferenca().toString()}',
+                      ),
+                _boxValores(Colors.green, 'lib/assets/images/check.png', 'Pago',
+                    'R\$ ${valorPagoSim.toString()}'),
+              ],
+            ),
+            SizedBox(height: 20),
+            Container(
+              height: MediaQuery.of(context).size.height / 1.6,
+              child: ListView.builder(
                 itemCount: dados.length,
                 itemBuilder: (context, index) {
-                  return Card(
-                    child: Container(
-                      width: MediaQuery.of(context).size.width,
-                      height: 80,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Colors.white,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.5),
-                            spreadRadius: 5,
-                            blurRadius: 4,
-                            offset: Offset(0, 3),
+                  return SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Card(
+                        child: Container(
+                          width: MediaQuery.of(context).size.width,
+                          height: 80,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.white,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.5),
+                                spreadRadius: 5,
+                                blurRadius: 4,
+                                offset: Offset(0, 3),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                      child: ListTile(
-                        leading: CircleAvatar(
-                          backgroundColor: Colors.amber,
+                          child: ListTile(
+                            onTap: () {},
+                            leading: CircleAvatar(
+                              backgroundColor: Colors.transparent,
+                              backgroundImage: dados[index].pagou == "Sim"
+                                  ? AssetImage(
+                                      'lib/assets/images/check.png',
+                                    )
+                                  : AssetImage(
+                                      'lib/assets/images/low-price.png',
+                                    ),
+                            ),
+                            title: Text(dados[index].descricao),
+                            subtitle: Text(dados[index].formaPagamento),
+                            trailing: Text(
+                                'R\$ ${dados[index].valor.toStringAsFixed(2)}'),
+                          ),
                         ),
-                        title: Text(dados[index].descricao),
-                        subtitle: Text(dados[index].formaPagamento),
-                        trailing: Text(
-                            'R\$ ${dados[index].valor.toStringAsFixed(2)}'),
                       ),
                     ),
                   );
                 },
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  _boxValores(Color color, String image, String texto) {
+  _boxValores(Color color, String image, String texto, String valor) {
     return Container(
-      width: 120,
-      height: 120,
+      width: 110,
+      height: 130,
       decoration: BoxDecoration(
         boxShadow: [
           BoxShadow(
@@ -201,14 +227,16 @@ class _ListarDespesasState extends State<ListarDespesas> {
             texto,
             style: TextStyle(
               color: Colors.white,
+              fontWeight: FontWeight.bold,
             ),
           ),
           SizedBox(height: 10),
           Text(
-            'R\$ 120,94',
+            valor.toString(),
             style: TextStyle(
               color: Colors.white,
               fontSize: 20,
+              fontWeight: FontWeight.bold,
             ),
           ),
         ],
@@ -286,6 +314,6 @@ _removerGasto(BuildContext context, ProviderGastos gastos) {
   Provider.of<ProviderGastos>(context, listen: false).removeItem(gastos.id);
 }
 
-_diferenca(BuildContext context) {
-  Provider.of<ProviderGastos>(context, listen: false).diferenca();
+double diferenca(BuildContext context) {
+  return Provider.of<ProviderGastos>(context, listen: false).diferenca();
 }

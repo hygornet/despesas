@@ -35,7 +35,7 @@ class _ListarDespesasState extends State<ListarDespesas> {
   void initState() {
     super.initState();
 
-    //LISTA TODAS AS DESPESAS CADASTRADAS NO BANCO DE DADOS.
+    //LISTA TODAS AS DESPESAS CADASTRADAS NO BANCO DE DADOS
     carregarLista =
         Provider.of<ProviderGastos>(context, listen: false).listarDespesas();
 

@@ -36,8 +36,8 @@ class _ListarDespesasState extends State<ListarDespesas> {
     super.initState();
 
     //LISTA TODAS AS DESPESAS CADASTRADAS NO BANCO DE DADOS.
-    // carregarLista =
-    //     Provider.of<ProviderGastos>(context, listen: false).listarDespesas();
+    carregarLista =
+        Provider.of<ProviderGastos>(context, listen: false).listarDespesas();
 
     //GUARDO A INFORMAÇÃO DO SALÁRIO DO BANCO DE DADOS NA VARIÁVEL SALÁRIO.
     getSalario().then((value) {

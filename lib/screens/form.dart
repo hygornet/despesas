@@ -151,7 +151,7 @@ class _FormScreenState extends State<FormScreen> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Image.asset(
-              'assets/images/download.png',
+              'lib/assets/images/logo2.png',
               fit: BoxFit.cover,
             ),
           ),

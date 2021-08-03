@@ -124,19 +124,19 @@ class _ListarDespesasState extends State<ListarDespesas> {
                     Colors.red,
                     'lib/assets/images/1694347.png',
                     'Despesa total',
-                    'R\$ ${Provider.of<ProviderGastos>(context, listen: false).calcularGastos().toString()}'),
+                    'R\$ ${Provider.of<ProviderGastos>(context, listen: false).calcularGastos().toStringAsFixed(2)}'),
                 resultadoIsNegative()
                     ? _boxValores(
                         Colors.red[700],
                         'lib/assets/images/attention.png',
                         'Devendo',
-                        'R\$ ${Provider.of<ProviderGastos>(context, listen: false).diferenca().toString()}',
+                        'R\$ ${Provider.of<ProviderGastos>(context, listen: false).diferenca().toStringAsFixed(2)}',
                       )
                     : _boxValores(
                         Colors.amber,
                         'lib/assets/images/dollar.png',
                         'Sobrando',
-                        'R\$ ${Provider.of<ProviderGastos>(context, listen: false).diferenca().toString()}',
+                        'R\$ ${Provider.of<ProviderGastos>(context, listen: false).diferenca().toStringAsFixed(2)}',
                       ),
                 _boxValores(Colors.green, 'lib/assets/images/check.png', 'Pago',
                     'R\$ ${valorPagoSim.toString()}'),
@@ -199,15 +199,15 @@ class _ListarDespesasState extends State<ListarDespesas> {
 
   _boxValores(Color color, String image, String texto, String valor) {
     return Container(
-      width: 110,
+      width: 115,
       height: 130,
       decoration: BoxDecoration(
         boxShadow: [
           BoxShadow(
             color: Colors.grey.withOpacity(0.5),
-            spreadRadius: 5,
-            blurRadius: 4,
-            offset: Offset(0, 3),
+            spreadRadius: 3,
+            blurRadius: 3,
+            offset: Offset(4, 6),
           ),
         ],
         borderRadius: BorderRadius.circular(10),
@@ -244,76 +244,7 @@ class _ListarDespesasState extends State<ListarDespesas> {
     );
   }
 
-  _containerSobrou(ProviderGastos provider, String texto) {
-    return Column(
-      children: [
-        Text(texto),
-        Text(
-          'R\$ ${provider.diferenca().toStringAsFixed(2)}',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ],
-    );
+  double diferenca(BuildContext context) {
+    return Provider.of<ProviderGastos>(context, listen: false).diferenca();
   }
-
-  _resultadoCalculo(String acessData, Color color, String text) {
-    return Container(
-      alignment: Alignment.center,
-      width: 200,
-      height: 50,
-      decoration: BoxDecoration(
-        border: Border.all(
-          width: 2,
-          color: color,
-        ),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(text),
-          Text(
-            'R\$ $acessData',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-_listaVazia() {
-  return Column(
-    mainAxisAlignment: MainAxisAlignment.center,
-    crossAxisAlignment: CrossAxisAlignment.center,
-    children: [
-      SizedBox(
-        height: 20,
-      ),
-      Center(
-        child: Image.asset(
-          "assets/images/money-png.png",
-          fit: BoxFit.cover,
-          height: 150,
-        ),
-      ),
-      SizedBox(
-        height: 40,
-      ),
-      Text('Infelizmente não há registros de gastos cadastrado.'),
-    ],
-  );
-}
-
-_removerGasto(BuildContext context, ProviderGastos gastos) {
-  Provider.of<ProviderGastos>(context, listen: false).removeItem(gastos.id);
-}
-
-double diferenca(BuildContext context) {
-  return Provider.of<ProviderGastos>(context, listen: false).diferenca();
 }

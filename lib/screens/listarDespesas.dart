@@ -3,7 +3,6 @@ import 'package:despesastable/provider/providerGastos.dart';
 import 'package:despesastable/utils/approutes.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:intl/intl.dart';
 
 class ListarDespesas extends StatefulWidget {
   @override
@@ -168,7 +167,119 @@ class _ListarDespesasState extends State<ListarDespesas> {
                             ],
                           ),
                           child: ListTile(
-                            onTap: () {},
+                            onTap: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    backgroundColor: Colors.grey[100],
+                                    title: Column(
+                                      children: [
+                                        Icon(
+                                          Icons.warning,
+                                          color: Colors.amber,
+                                        ),
+                                        SizedBox(height: 10),
+                                        Text('Detalhes da Despesa')
+                                      ],
+                                    ),
+                                    content: Container(
+                                      height: 150,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Text('Nome da despesa: '),
+                                              Text(
+                                                dados[index]
+                                                    .descricao
+                                                    .toString(),
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                            ],
+                                          ),
+                                          Row(
+                                            children: [
+                                              Text('Forma de Pagamento: '),
+                                              Text(
+                                                dados[index]
+                                                    .formaPagamento
+                                                    .toString(),
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          Row(
+                                            children: [
+                                              Text('Valor da despesa: '),
+                                              Text(
+                                                'R\$ ${dados[index].valor.toStringAsFixed(2)}',
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          Row(
+                                            children: [
+                                              Text('Pagou? '),
+                                              Text(
+                                                dados[index].pagou.toString(),
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          Expanded(
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                TextButton.icon(
+                                                  onPressed: () {
+                                                    Navigator.of(context)
+                                                        .pushNamed(
+                                                            AppRoutes.HOME,
+                                                            arguments:
+                                                                dados[index]);
+                                                  },
+                                                  icon: Icon(Icons.sync_alt,
+                                                      color: Colors.green),
+                                                  label: Text('Alterar'),
+                                                ),
+                                                TextButton.icon(
+                                                  onPressed: () {
+                                                    Provider.of<ProviderGastos>(
+                                                            context,
+                                                            listen: false)
+                                                        .removeItem(
+                                                            dados[index].id);
+                                                    Navigator.pop(
+                                                        context, true);
+                                                  },
+                                                  icon: Icon(
+                                                    Icons.delete,
+                                                    color: Colors.red,
+                                                  ),
+                                                  label: Text('Excluir'),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                },
+                              );
+                            },
                             leading: CircleAvatar(
                               backgroundColor: Colors.transparent,
                               backgroundImage: dados[index].pagou == "Sim"

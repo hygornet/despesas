@@ -38,10 +38,12 @@ class DbData {
     final db = await DbData.database();
     List<Map> result = await db.rawQuery("SELECT salario FROM despesas");
 
-    result.forEach((element) {
-      gastos.salario = element['salario'];
-    });
-    return result.first.values.first;
+    if (result != null) {
+      result.forEach((element) {
+        gastos.salario = element['salario'];
+      });
+      return gastos.salario;
+    }
   }
 
   static Future valorTotalPago() async {

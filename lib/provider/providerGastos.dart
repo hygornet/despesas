@@ -11,6 +11,8 @@ class ProviderGastos with ChangeNotifier {
   String formaPagamento;
   String pagou;
   double salario;
+  double valorPago;
+  double diff;
 
   ProviderGastos({
     this.id,
@@ -20,6 +22,8 @@ class ProviderGastos with ChangeNotifier {
     this.formaPagamento,
     this.pagou,
     this.salario,
+    this.valorPago,
+    this.diff,
   });
 
   List<ProviderGastos> _item = [];

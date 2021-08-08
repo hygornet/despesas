@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class FormScreen extends StatefulWidget {
   @override
@@ -29,11 +30,14 @@ class _FormScreenState extends State<FormScreen> {
     'Transferência',
   ];
 
-  ProviderGastos gastos = ProviderGastos();
-
   getSalario() async {
-    final carregarSalario = await DbData.retornarSalario()
-        .then((value) => salarioController.text = value.toString());
+    final carregarSalario = await DbData.retornarSalario().then((value) {
+      if (value != null) {
+        salarioController.text = value.toString();
+      } else {
+        value = 0;
+      }
+    });
     return carregarSalario;
   }
 
@@ -108,27 +112,26 @@ class _FormScreenState extends State<FormScreen> {
       //SALVA OS DADOS DO FORMULÁRIO.
       _key.currentState.save();
 
-      //GUARDA TODOS OS DADOS DIGITADOS NO FORMULÁRIO.
-      final valuesGastos = ProviderGastos(
-        id: _formData['id'],
-        descricao: _formData['descricao'],
-        valor: double.parse(_formData['valor']),
-        formaPagamento: _formData['formaPagamento'],
-        pagou: _formData['pagou'],
-        salario: double.parse(_formData['salario']),
-      );
+      gastosProvider.id = _formData['id'];
+      gastosProvider.descricao = _formData['descricao'];
+      gastosProvider.valor = double.parse(_formData['valor']);
+      gastosProvider.formaPagamento = _formData['formaPagamento'];
+      gastosProvider.pagou = _formData['pagou'];
+      gastosProvider.salario = double.parse(_formData['salario']);
 
       //SE O ID FOR NULLO, QUER DIZER QUE É UM NOVO USUÁRIO, SENDO ASSIM, CADASTRE O NOVO USUÁRIO.
       if (_formData['id'] == null) {
         //ADICIONA NOVO USUÁRIO.
-        gastosProvider.adicionarGastos(valuesGastos);
+
+        gastosProvider.adicionarGastos(gastosProvider);
+
         //CALCULA OS GASTOS.
         gastosProvider.calcularGastos();
         //EXIBE UMA MENSAGEM NO RODAPE DO APLICATIVO INFORMANDO QUE A DESPESA FOI CADASTRADA.
         showSnackBar('Cadastrada');
       } else if (_formData['id'] != null) {
         //SE FOR UM ID EXISTENTE, CHAMA O MÉTODO DE ATUALIZAR.
-        gastosProvider.atualizarGastos(valuesGastos);
+        gastosProvider.atualizarGastos(gastosProvider);
         //CALCULA OS GASTOS.
         gastosProvider.calcularGastos();
         //EXIBE UMA MENSAGEM NO RODAPE DO APLICATIVO INFORMANDO QUE A DESPESA FOI CADASTRADA.

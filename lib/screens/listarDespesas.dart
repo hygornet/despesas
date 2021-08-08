@@ -64,6 +64,9 @@ class _ListarDespesasState extends State<ListarDespesas> {
               formaPagamento: gastos.formaPagamento,
               pagou: gastos.pagou,
               salario: gastos.salario,
+              valorTotal: gastos.valorTotal,
+              diff: gastos.diff,
+              valorPago: gastos.valorPago,
             ))
         .toList();
 

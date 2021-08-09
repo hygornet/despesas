@@ -70,13 +70,13 @@ class _ListarDespesasState extends State<ListarDespesas> {
             ))
         .toList();
 
-    bool existeDespesa() {
-      if (provider.lenghtList == null) {
-        return true;
-      } else {
-        return false;
-      }
-    }
+    // bool existeDespesa() {
+    //   if (provider.lenghtList == null) {
+    //     return true;
+    //   } else {
+    //     return false;
+    //   }
+    // }
 
     //VERIFICA SE O QUE SOBROU É NEGATIVO OU NÃO.
     bool resultadoIsNegative() {

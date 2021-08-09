@@ -47,14 +47,20 @@ class DbData {
   }
 
   static Future valorTotalPago() async {
-    double total = 0.0;
+    ProviderGastos gastos = ProviderGastos();
+    gastos.valorPago = 0;
     final db = await DbData.database();
     var resp =
         await db.rawQuery("SELECT valor FROM despesas WHERE pagou = 'Sim'");
-    resp.forEach((element) {
-      total += element['valor'];
-    });
-    return total;
+
+    if (resp != null) {
+      resp.forEach((element) {
+        gastos.valorPago += element['valor'];
+      });
+      return gastos.valorPago;
+    } else {
+      return 0;
+    }
   }
 
   static Future<List<Map<String, dynamic>>> getData(String table) async {
